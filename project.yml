@@ -1,0 +1,68 @@
+name: PasswordManager
+options:
+  bundleIdPrefix: com.passkeeper
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: YES
+
+packages:
+  SQLiteSwift:
+    url: https://github.com/stephencelis/SQLite.swift
+    from: 0.14.1
+
+targets:
+  PasswordManager:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+        type: group
+      - path: Resources
+        type: group
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.passkeeper.macos
+        INFOPLIST_FILE: Resources/Info.plist
+        PRODUCT_NAME: PassKeeper
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        COMBINE_HIDPI_IMAGES: YES
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - "@executable_path/../Frameworks"
+        ENABLE_APP_SANDBOX: YES
+        CODE_SIGN_ENTITLEMENTS: Resources/PassKeeper.entitlements
+    dependencies:
+      - package: SQLiteSwift
+        product: SQLite
+    entitlements:
+      path: Resources/PassKeeper.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.keychain-access-groups:
+          - $(AppIdentifierPrefix)com.passkeeper.macos
+        com.apple.security.files.user-selected.read-write: true
+
+  PasswordManagerTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: SourcesTests
+        type: group
+    dependencies:
+      - target: PasswordManager
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.passkeeper.macos.tests
+        INFOPLIST_FILE: ResourcesTests/Info.plist
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/PassKeeper.app/Contents/MacOS/PassKeeper
+        BUNDLE_LOADER: $(TEST_HOST)
+        SWIFT_VERSION: "5.9"
