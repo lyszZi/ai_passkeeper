@@ -50,8 +50,8 @@ final class DatabaseManager {
     }
 
     private func createTables() throws {
-        try db?.run(passwords.create(ifNotExists: true) { t in
-            t.column(colId, primaryKey: true)
+        try db?.run(passwords.create(ifNotExists: true) { table in
+            table.column(colId, primaryKey: true)
             t.column(colCategory, defaultValue: "General")
             t.column(colTitle)
             t.column(colUsername)

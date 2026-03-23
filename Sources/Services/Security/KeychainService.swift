@@ -5,26 +5,26 @@ import Security
 final class KeychainService {
 
     private let serviceName = "com.passkeeper.macos"
-    private let masterPasswordKey = "masterPasswordHash"
+    private let primaryPasswordKey = "primaryPasswordHash"
     private let saltKey = "passwordSalt"
     private let dataEncryptionKeyTag = "dataEncryptionKey"
 
-    // MARK: - Master Password
+    // MARK: - Primary Password
 
-    /// Check if master password hash is stored
+    /// Check if primary password hash is stored
     func hasStoredPasswordHash() -> Bool {
-        return getData(forKey: masterPasswordKey) != nil
+        return getData(forKey: primaryPasswordKey) != nil
     }
 
-    /// Store master password hash
-    func storeMasterPasswordHash(_ hash: Data, salt: Data) throws {
-        try storeData(hash, forKey: masterPasswordKey)
+    /// Store primary password hash
+    func storePrimaryPasswordHash(_ hash: Data, salt: Data) throws {
+        try storeData(hash, forKey: primaryPasswordKey)
         try storeData(salt, forKey: saltKey)
     }
 
-    /// Get stored master password hash
-    func getMasterPasswordHash() -> Data? {
-        return getData(forKey: masterPasswordKey)
+    /// Get stored primary password hash
+    func getPrimaryPasswordHash() -> Data? {
+        return getData(forKey: primaryPasswordKey)
     }
 
     /// Get stored salt
@@ -32,9 +32,9 @@ final class KeychainService {
         return getData(forKey: saltKey)
     }
 
-    /// Delete master password hash and salt
-    func deleteMasterPasswordHash() throws {
-        try deleteItem(forKey: masterPasswordKey)
+    /// Delete primary password hash and salt
+    func deletePrimaryPasswordHash() throws {
+        try deleteItem(forKey: primaryPasswordKey)
         try deleteItem(forKey: saltKey)
     }
 

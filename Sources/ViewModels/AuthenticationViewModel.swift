@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
 
-    @Published var masterPassword: String = ""
+    @Published var primaryPassword: String = ""
     @Published var confirmPassword: String = ""
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
@@ -25,20 +25,20 @@ final class AuthenticationViewModel: ObservableObject {
         biometricType != .none
     }
 
-    // MARK: - Setup Master Password
+    // MARK: - Setup Primary Password
 
-    func setupMasterPassword() async -> Bool {
-        guard !masterPassword.isEmpty else {
-            errorMessage = "Please enter a master password"
+    func setupPrimaryPassword() async -> Bool {
+        guard !primaryPassword.isEmpty else {
+            errorMessage = "Please enter a primary password"
             return false
         }
 
-        guard masterPassword.count >= 8 else {
+        guard primaryPassword.count >= 8 else {
             errorMessage = "Password must be at least 8 characters"
             return false
         }
 
-        guard masterPassword == confirmPassword else {
+        guard primaryPassword == confirmPassword else {
             errorMessage = "Passwords do not match"
             return false
         }
@@ -47,7 +47,7 @@ final class AuthenticationViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            try await appState.setupMasterPassword(masterPassword)
+            try await appState.setupPrimaryPassword(primaryPassword)
             clearSensitiveData()
             isLoading = false
             return true
@@ -61,8 +61,8 @@ final class AuthenticationViewModel: ObservableObject {
     // MARK: - Unlock with Password
 
     func unlockWithPassword() async -> Bool {
-        guard !masterPassword.isEmpty else {
-            errorMessage = "Please enter your master password"
+        guard !primaryPassword.isEmpty else {
+            errorMessage = "Please enter your primary password"
             return false
         }
 
@@ -70,11 +70,11 @@ final class AuthenticationViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let isValid = try await appState.verifyMasterPassword(masterPassword)
+            let isValid = try await appState.verifyPrimaryPassword(primaryPassword)
             if isValid {
                 clearSensitiveData()
             } else {
-                errorMessage = "Invalid master password"
+                errorMessage = "Invalid primary password"
             }
             isLoading = false
             return isValid
@@ -106,12 +106,12 @@ final class AuthenticationViewModel: ObservableObject {
 
     private func clearSensitiveData() {
         // Overwrite password in memory
-        masterPassword = ""
+        primaryPassword = ""
         confirmPassword = ""
     }
 
     func reset() {
-        masterPassword = ""
+        primaryPassword = ""
         confirmPassword = ""
         errorMessage = nil
         showPassword = false

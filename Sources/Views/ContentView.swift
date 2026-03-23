@@ -37,12 +37,12 @@ struct LockScreenView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("Enter your master password to unlock")
+            Text("Enter your primary password to unlock")
                 .foregroundStyle(.secondary)
 
             // Password field
             VStack(spacing: 16) {
-                SecureField("Master Password", text: $viewModel.masterPassword)
+                SecureField("Primary Password", text: $viewModel.primaryPassword)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 300)
                     .onSubmit {
@@ -99,12 +99,12 @@ struct SetupView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("Create a master password to secure your vault")
+            Text("Create a primary password to secure your vault")
                 .foregroundStyle(.secondary)
 
             // Setup form
             VStack(spacing: 16) {
-                SecureField("Master Password", text: $viewModel.masterPassword)
+                SecureField("Primary Password", text: $viewModel.primaryPassword)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 300)
 
@@ -113,7 +113,7 @@ struct SetupView: View {
                     .frame(width: 300)
                     .onSubmit {
                         Task {
-                            _ = await viewModel.setupMasterPassword()
+                            _ = await viewModel.setupPrimaryPassword()
                         }
                     }
 

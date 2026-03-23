@@ -30,8 +30,8 @@ final class AppState: ObservableObject {
 
     // MARK: - Authentication
 
-    /// Setup master password for first time
-    func setupMasterPassword(_ password: String) async throws {
+    /// Setup primary password for first time
+    func setupPrimaryPassword(_ password: String) async throws {
         try securityService.setupMasterPassword(password)
         await MainActor.run {
             self.isFirstLaunch = false
@@ -40,9 +40,9 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// Verify master password
-    func verifyMasterPassword(_ password: String) async throws -> Bool {
-        let isValid = try securityService.verifyMasterPassword(password)
+    /// Verify primary password
+    func verifyPrimaryPassword(_ password: String) async throws -> Bool {
+        let isValid = try securityService.verifyPrimaryPassword(password)
         if isValid {
             await MainActor.run {
                 self.isLocked = false
@@ -74,13 +74,13 @@ final class AppState: ObservableObject {
         NotificationCenter.default.post(name: .vaultLocked, object: nil)
     }
 
-    /// Change master password
-    func changeMasterPassword(currentPassword: String, newPassword: String) async throws {
-        let isValid = try securityService.verifyMasterPassword(currentPassword)
+    /// Change primary password
+    func changePrimaryPassword(currentPassword: String, newPassword: String) async throws {
+        let isValid = try securityService.verifyPrimaryPassword(currentPassword)
         guard isValid else {
             throw AppError.invalidPassword
         }
-        try await securityService.changeMasterPassword(newPassword)
+        try await securityService.changePrimaryPassword(newPassword)
     }
 }
 
@@ -120,7 +120,7 @@ enum AppError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidPassword:
-            return "Invalid master password"
+            return "Invalid primary password"
         case .biometricNotAvailable:
             return "Biometric authentication is not available"
         case .encryptionFailed:
