@@ -1,0 +1,80 @@
+/* App */
+"app.title" = "PassKeeper";
+
+/* Main View */
+"main.passwords" = "Passwords";
+"main.addPassword" = "Add Password";
+"main.lock" = "Lock";
+"main.categories" = "Categories";
+"main.search" = "Search";
+"main.noPasswordSelected" = "No Password Selected";
+"main.noPasswordSelectedDesc" = "Select a password from the sidebar or create a new one";
+"main.addNewPassword" = "Add New Password";
+
+/* Category */
+"category.all" = "All";
+"category.general" = "General";
+"category.social" = "Social";
+"category.work" = "Work";
+"category.finance" = "Finance";
+"category.shopping" = "Shopping";
+"category.entertainment" = "Entertainment";
+
+/* Content View (Auth) */
+"auth.unlock" = "Unlock";
+"auth.enterPassword" = "Enter your primary password to unlock";
+"auth.welcome" = "Welcome to PassKeeper";
+"auth.createVault" = "Create Vault";
+"auth.createVaultDesc" = "Create a primary password to secure your vault";
+"auth.passwordMinLength" = "Password must be at least 8 characters";
+"auth.password" = "Primary Password";
+"auth.confirmPassword" = "Confirm Password";
+
+/* Password Detail */
+"detail.password" = "Password";
+"detail.notes" = "Notes";
+"detail.details" = "Details";
+"detail.created" = "Created:";
+"detail.lastModified" = "Last modified:";
+"detail.copySuccess" = "Password copied! Will be cleared in 10 seconds.";
+"detail.deletePassword" = "Delete Password";
+"detail.cancel" = "Cancel";
+"detail.delete" = "Delete";
+"detail.deleteConfirm" = "Are you sure you want to delete";
+"detail.deleteWarning" = "This action cannot be undone.";
+"detail.username" = "Username";
+"detail.copied" = "Copied!";
+
+/* Add/Edit Password */
+"addEdit.title" = "Details";
+"addEdit.titleField" = "Title";
+"addEdit.username" = "Username / Email";
+"addEdit.category" = "Category";
+"addEdit.cancel" = "Cancel";
+"addEdit.save" = "Save";
+"addEdit.generateStrong" = "Generate Strong Password (20 chars)";
+"addEdit.generate16" = "Generate 16 chars";
+"addEdit.generate12" = "Generate 12 chars";
+"addEdit.generate8" = "Generate 8 chars";
+
+/* Settings */
+"settings.title" = "Settings";
+"settings.general" = "General";
+"settings.security" = "Security";
+"settings.language" = "Language";
+"settings.resetPassword" = "Reset Password";
+"settings.currentPassword" = "Current Password";
+"settings.newPassword" = "New Password";
+"settings.confirmPassword" = "Confirm Password";
+"settings.reset" = "Reset";
+"settings.passwordMinLength" = "Password must be at least 6 characters";
+"settings.passwordMismatch" = "Passwords do not match";
+"settings.resetFailed" = "Password reset failed";
+"settings.appearance" = "Appearance";
+"settings.appearance.system" = "System";
+"settings.appearance.light" = "Light";
+"settings.appearance.dark" = "Dark";
+
+/* Menu */
+"menu.newPassword" = "New Password";
+"menu.lockVault" = "Lock Vault";

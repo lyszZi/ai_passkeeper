@@ -105,4 +105,8 @@ enum PasswordCategory: String, CaseIterable, Codable {
         case .other: return "folder"
         }
     }
+
+    var localizedName: String {
+        "category.\(rawValue.lowercased())".localized
+    }
 }

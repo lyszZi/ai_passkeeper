@@ -1,7 +1,8 @@
 import Foundation
+import XCTest
 
 /// Unit tests for PasswordItem model
-final class PasswordItemTests {
+final class PasswordItemTests: XCTestCase {
 
     func testPasswordItemCreation() {
         let item = TestPasswordItem(
@@ -67,7 +68,7 @@ struct TestPasswordItem {
 }
 
 /// Unit tests for BiometricType
-final class BiometricTypeTests {
+final class BiometricTypeTests: XCTestCase {
 
     func testBiometricTypeDisplayName() {
         let touchID = TestBiometricType.touchID
@@ -114,7 +115,7 @@ enum TestBiometricType {
 }
 
 /// Unit tests for error messages
-final class ErrorMessageTests {
+final class ErrorMessageTests: XCTestCase {
 
     func testSecurityErrorDescriptions() {
         let noSessionKey = "No active session key"
@@ -146,7 +147,7 @@ final class ErrorMessageTests {
 }
 
 /// Unit tests for AppError
-final class AppErrorTests {
+final class AppErrorTests: XCTestCase {
 
     func testAppErrorDescriptions() {
         let invalidPassword = "Invalid master password"

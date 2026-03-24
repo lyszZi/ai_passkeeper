@@ -16,7 +16,8 @@ final class SettingsViewModel: ObservableObject {
 
     init() {
         self.selectedLanguage = i18nService.currentLanguage
-        self.selectedAppearance = AppearanceMode(rawValue: UserDefaults.standard.integer(forKey: appearanceKey)) ?? .system
+        let storedValue = UserDefaults.standard.integer(forKey: appearanceKey)
+        self.selectedAppearance = AppearanceMode(rawValue: storedValue) ?? .system
     }
 
     func updateLanguage(_ language: I18nService.Language) {

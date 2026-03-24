@@ -38,13 +38,13 @@ struct PasswordDetailView: View {
                 Divider()
 
                 // Username
-                DetailRow(label: "Username", value: item.username) {
+                DetailRow(label: "detail.username".localized, value: item.username) {
                     copyToClipboard(item.username)
                 }
 
                 // Password
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Password")
+                    Text("detail.password".localized)
                         .font(.headline)
                         .foregroundStyle(.secondary)
 
@@ -83,7 +83,7 @@ struct PasswordDetailView: View {
                             .foregroundStyle(.green)
                     }
 
-                    Text("Password copied! Will be cleared in 10 seconds.")
+                    Text("detail.copySuccess".localized)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -91,7 +91,7 @@ struct PasswordDetailView: View {
                 // Notes
                 if !item.notes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Notes")
+                        Text("detail.notes".localized)
                             .font(.headline)
                             .foregroundStyle(.secondary)
 
@@ -105,19 +105,19 @@ struct PasswordDetailView: View {
 
                 // Metadata
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Details")
+                    Text("detail.details".localized)
                         .font(.headline)
                         .foregroundStyle(.secondary)
 
                     HStack {
-                        Text("Created:")
+                        Text("detail.created".localized)
                             .foregroundStyle(.secondary)
                         Text(item.createdAt, style: .date)
                     }
                     .font(.caption)
 
                     HStack {
-                        Text("Last modified:")
+                        Text("detail.lastModified".localized)
                             .foregroundStyle(.secondary)
                         Text(item.updatedAt, style: .date)
                     }
@@ -130,20 +130,20 @@ struct PasswordDetailView: View {
                 Button(role: .destructive) {
                     showingDeleteConfirmation = true
                 } label: {
-                    Label("Delete Password", systemImage: "trash")
+                    Label("detail.deletePassword".localized, systemImage: "trash")
                 }
                 .buttonStyle(.bordered)
             }
             .padding()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .alert("Delete Password?", isPresented: $showingDeleteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
+        .alert("detail.deletePassword".localized + "?", isPresented: $showingDeleteConfirmation) {
+            Button("detail.cancel".localized, role: .cancel) { }
+            Button("detail.delete".localized, role: .destructive) {
                 onDelete()
             }
         } message: {
-            Text("Are you sure you want to delete \"\(item.title)\"? This action cannot be undone.")
+            Text("detail.deleteConfirm".localized + " \"\(item.title)\"? " + "detail.deleteWarning".localized)
         }
     }
 
@@ -152,7 +152,7 @@ struct PasswordDetailView: View {
         NSPasteboard.general.setString(text, forType: .string)
 
         // Set feedback
-        copyFeedback = "Copied!"
+        copyFeedback = "detail.copied".localized
 
         // Schedule clipboard clearing after 10 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {

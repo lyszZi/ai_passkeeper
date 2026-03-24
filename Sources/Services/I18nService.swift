@@ -69,7 +69,8 @@ final class I18nService: ObservableObject {
 
     /// Get localized string for a key
     func localizedString(forKey key: String) -> String {
-        let bundle = Bundle.main.path(forResource: currentLanguage.rawValue, ofType: "lproj").flatMap { Bundle(path: $0) } ?? .main
+        let bundlePath = Bundle.main.path(forResource: currentLanguage.rawValue, ofType: "lproj")
+        let bundle = bundlePath.flatMap { Bundle(path: $0) } ?? .main
         return NSLocalizedString(key, bundle: bundle, comment: "")
     }
 }
