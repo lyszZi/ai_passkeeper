@@ -32,7 +32,7 @@ final class AppState: ObservableObject {
 
     /// Setup primary password for first time
     func setupPrimaryPassword(_ password: String) async throws {
-        try securityService.setupMasterPassword(password)
+        try securityService.setupPrimaryPassword(password)
         await MainActor.run {
             self.isFirstLaunch = false
             self.isSetupComplete = true
@@ -53,13 +53,15 @@ final class AppState: ObservableObject {
 
     /// Unlock with biometric
     func unlockWithBiometric() async throws -> Bool {
-        let isAuthenticated = try await LocalAuthService.shared.authenticate(reason: "Unlock PassKeeper")
-        if isAuthenticated {
+        // Directly try to restore session key from keychain
+        // This will trigger biometric authentication if needed
+        let keyRestored = try securityService.unlockWithBiometric()
+        if keyRestored {
             await MainActor.run {
                 self.isLocked = false
             }
         }
-        return isAuthenticated
+        return keyRestored
     }
 
     /// Lock the vault

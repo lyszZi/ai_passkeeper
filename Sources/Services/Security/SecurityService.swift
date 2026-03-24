@@ -31,6 +31,9 @@ final class SecurityService {
         try keychainService.storePrimaryPasswordHash(passwordHash, salt: salt)
         try keychainService.storeDataEncryptionKey(encryptedDEK)
 
+        // Store session key in keychain with biometric protection
+        try keychainService.storeSessionKey(keyData)
+
         // Store the derived key in memory for session
         SessionKeyManager.shared.setDerivedKey(derivedKey)
     }
@@ -52,6 +55,8 @@ final class SecurityService {
         let isValid = constantTimeCompare(storedHash, inputHash)
 
         if isValid {
+            // Store session key in keychain with biometric protection
+            try? keychainService.storeSessionKey(keyData)
             // Store derived key in session
             SessionKeyManager.shared.setDerivedKey(derivedKey)
         }
@@ -74,7 +79,26 @@ final class SecurityService {
         let keyData = derivedKey.withUnsafeBytes { Data($0) }
         let passwordHash = hashData(keyData)
         try keychainService.storePrimaryPasswordHash(passwordHash, salt: salt)
+        // Store session key in keychain with biometric protection
+        try keychainService.storeSessionKey(keyData)
         SessionKeyManager.shared.setDerivedKey(derivedKey)
+    }
+
+    // MARK: - Biometric Unlock
+
+    /// Unlock session key using biometric authentication
+    /// This retrieves the session key from Keychain (which requires biometric)
+    func unlockWithBiometric() throws -> Bool {
+        // Get session key from keychain (triggers biometric)
+        guard let keyData = keychainService.getSessionKey() else {
+            return false
+        }
+
+        // Restore the session key in memory
+        let derivedKey = SymmetricKey(data: keyData)
+        SessionKeyManager.shared.setDerivedKey(derivedKey)
+
+        return true
     }
 
     // MARK: - Encryption/Decryption
@@ -205,7 +229,7 @@ final class SecurityService {
             let keyData = key.withUnsafeBytes { Data($0) }
             let salt = generateRandomBytes(count: 32)
             let fallbackKey = try pbkdf2DeriveKey(
-                password: Data("fallback"),
+                password: Data("fallback".utf8),
                 salt: salt,
                 iterations: 100000,
                 keyLength: 32

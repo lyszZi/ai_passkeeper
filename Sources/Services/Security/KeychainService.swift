@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import LocalAuthentication
 
 /// Service for securely storing and retrieving data from Keychain
 final class KeychainService {
@@ -8,6 +9,7 @@ final class KeychainService {
     private let primaryPasswordKey = "primaryPasswordHash"
     private let saltKey = "passwordSalt"
     private let dataEncryptionKeyTag = "dataEncryptionKey"
+    private let sessionKeyTag = "sessionKey"
 
     // MARK: - Primary Password
 
@@ -53,6 +55,47 @@ final class KeychainService {
     /// Delete data encryption key
     func deleteDataEncryptionKey() throws {
         try deleteItem(forKey: dataEncryptionKeyTag)
+    }
+
+    // MARK: - Session Key
+
+    /// Store session key (without biometric protection for now)
+    func storeSessionKey(_ key: Data) throws {
+        try storeData(key, forKey: sessionKeyTag)
+    }
+
+    /// Retrieve session key
+    func getSessionKey() -> Data? {
+        return getData(forKey: sessionKeyTag)
+    }
+
+    /// Retrieve session key (will trigger biometric if needed) - disabled
+    func _getSessionKeyWithBiometric() -> Data? {
+        let context = LAContext()
+        context.localizedReason = "Access session key"
+
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: serviceName,
+            kSecAttrAccount as String: sessionKeyTag,
+            kSecReturnData as String: true,
+            kSecUseAuthenticationContext as String: context,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess else {
+            return nil
+        }
+
+        return result as? Data
+    }
+
+    /// Delete session key
+    func deleteSessionKey() throws {
+        try deleteItem(forKey: sessionKeyTag)
     }
 
     // MARK: - Private Methods
