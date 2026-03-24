@@ -1,30 +1,32 @@
 import Foundation
 import Security
+import LocalAuthentication
 
 /// Service for securely storing and retrieving data from Keychain
 final class KeychainService {
 
     private let serviceName = "com.passkeeper.macos"
-    private let masterPasswordKey = "masterPasswordHash"
+    private let primaryPasswordKey = "primaryPasswordHash"
     private let saltKey = "passwordSalt"
     private let dataEncryptionKeyTag = "dataEncryptionKey"
+    private let sessionKeyTag = "sessionKey"
 
-    // MARK: - Master Password
+    // MARK: - Primary Password
 
-    /// Check if master password hash is stored
+    /// Check if primary password hash is stored
     func hasStoredPasswordHash() -> Bool {
-        return getData(forKey: masterPasswordKey) != nil
+        return getData(forKey: primaryPasswordKey) != nil
     }
 
-    /// Store master password hash
-    func storeMasterPasswordHash(_ hash: Data, salt: Data) throws {
-        try storeData(hash, forKey: masterPasswordKey)
+    /// Store primary password hash
+    func storePrimaryPasswordHash(_ hash: Data, salt: Data) throws {
+        try storeData(hash, forKey: primaryPasswordKey)
         try storeData(salt, forKey: saltKey)
     }
 
-    /// Get stored master password hash
-    func getMasterPasswordHash() -> Data? {
-        return getData(forKey: masterPasswordKey)
+    /// Get stored primary password hash
+    func getPrimaryPasswordHash() -> Data? {
+        return getData(forKey: primaryPasswordKey)
     }
 
     /// Get stored salt
@@ -32,9 +34,9 @@ final class KeychainService {
         return getData(forKey: saltKey)
     }
 
-    /// Delete master password hash and salt
-    func deleteMasterPasswordHash() throws {
-        try deleteItem(forKey: masterPasswordKey)
+    /// Delete primary password hash and salt
+    func deletePrimaryPasswordHash() throws {
+        try deleteItem(forKey: primaryPasswordKey)
         try deleteItem(forKey: saltKey)
     }
 
@@ -53,6 +55,47 @@ final class KeychainService {
     /// Delete data encryption key
     func deleteDataEncryptionKey() throws {
         try deleteItem(forKey: dataEncryptionKeyTag)
+    }
+
+    // MARK: - Session Key
+
+    /// Store session key (without biometric protection for now)
+    func storeSessionKey(_ key: Data) throws {
+        try storeData(key, forKey: sessionKeyTag)
+    }
+
+    /// Retrieve session key
+    func getSessionKey() -> Data? {
+        return getData(forKey: sessionKeyTag)
+    }
+
+    /// Retrieve session key (will trigger biometric if needed) - disabled
+    func getSessionKeyWithBiometric() -> Data? {
+        let context = LAContext()
+        context.localizedReason = "Access session key"
+
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: serviceName,
+            kSecAttrAccount as String: sessionKeyTag,
+            kSecReturnData as String: true,
+            kSecUseAuthenticationContext as String: context,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess else {
+            return nil
+        }
+
+        return result as? Data
+    }
+
+    /// Delete session key
+    func deleteSessionKey() throws {
+        try deleteItem(forKey: sessionKeyTag)
     }
 
     // MARK: - Private Methods

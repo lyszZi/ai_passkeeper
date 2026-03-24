@@ -1,0 +1,81 @@
+/* App */
+"app.title" = "密码管家";
+
+/* Main View */
+"main.passwords" = "密码";
+"main.addPassword" = "添加密码";
+"main.lock" = "锁定";
+"main.categories" = "分类";
+"main.search" = "搜索";
+"main.noPasswordSelected" = "未选择密码";
+"main.noPasswordSelectedDesc" = "从侧边栏选择一个密码或创建新密码";
+"main.addNewPassword" = "添加新密码";
+
+/* Category */
+"category.all" = "全部";
+"category.general" = "通用";
+"category.social" = "社交";
+"category.work" = "工作";
+"category.finance" = "金融";
+"category.shopping" = "购物";
+"category.entertainment" = "娱乐";
+"category.other" = "其他";
+
+/* Content View (Auth) */
+"auth.unlock" = "解锁";
+"auth.enterPassword" = "输入主密码以解锁";
+"auth.welcome" = "欢迎使用密码管家";
+"auth.createVault" = "创建保险库";
+"auth.createVaultDesc" = "创建一个主密码来保护您的保险库";
+"auth.passwordMinLength" = "密码至少需要8个字符";
+"auth.password" = "主密码";
+"auth.confirmPassword" = "确认密码";
+
+/* Password Detail */
+"detail.password" = "密码";
+"detail.notes" = "备注";
+"detail.details" = "详情";
+"detail.created" = "创建时间：";
+"detail.lastModified" = "最后修改：";
+"detail.copySuccess" = "密码已复制！将在10秒后清除。";
+"detail.deletePassword" = "删除密码";
+"detail.cancel" = "取消";
+"detail.delete" = "删除";
+"detail.deleteConfirm" = "确定要删除";
+"detail.deleteWarning" = "此操作无法撤销";
+"detail.username" = "用户名";
+"detail.copied" = "已复制！";
+
+/* Add/Edit Password */
+"addEdit.title" = "密码详情";
+"addEdit.titleField" = "标题";
+"addEdit.username" = "用户名 / 邮箱";
+"addEdit.category" = "分类";
+"addEdit.cancel" = "取消";
+"addEdit.save" = "保存";
+"addEdit.generateStrong" = "生成强密码 (20位)";
+"addEdit.generate16" = "生成16位";
+"addEdit.generate12" = "生成12位";
+"addEdit.generate8" = "生成8位";
+
+/* Settings */
+"settings.title" = "设置";
+"settings.general" = "通用";
+"settings.security" = "安全";
+"settings.language" = "语言";
+"settings.resetPassword" = "重置密码";
+"settings.currentPassword" = "当前密码";
+"settings.newPassword" = "新密码";
+"settings.confirmPassword" = "确认密码";
+"settings.reset" = "重置";
+"settings.passwordMinLength" = "密码至少需要6个字符";
+"settings.passwordMismatch" = "两次输入的密码不一致";
+"settings.resetFailed" = "重置密码失败";
+"settings.appearance" = "外观";
+"settings.appearance.system" = "跟随系统";
+"settings.appearance.light" = "浅色";
+"settings.appearance.dark" = "深色";
+
+/* Menu */
+"menu.newPassword" = "新建密码";
+"menu.lockVault" = "锁定保险库";

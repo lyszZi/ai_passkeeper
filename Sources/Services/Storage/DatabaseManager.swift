@@ -10,15 +10,15 @@ final class DatabaseManager {
 
     // Table definition
     private let passwords = Table("passwords")
-    private let colId = Expression<String>("id")
-    private let colCategory = Expression<String>("category")
-    private let colTitle = Expression<String>("title")
-    private let colUsername = Expression<String>("username")
-    private let colEncryptedPassword = Expression<Data>("encryptedPassword")
-    private let colNotes = Expression<String>("notes")
-    private let colCreatedAt = Expression<Double>("createdAt")
-    private let colUpdatedAt = Expression<Double>("updatedAt")
-    private let colSearchIndex = Expression<String>("searchIndex")
+    private let colId = SQLite.Expression<String>("id")
+    private let colCategory = SQLite.Expression<String>("category")
+    private let colTitle = SQLite.Expression<String>("title")
+    private let colUsername = SQLite.Expression<String>("username")
+    private let colEncryptedPassword = SQLite.Expression<Data>("encryptedPassword")
+    private let colNotes = SQLite.Expression<String>("notes")
+    private let colCreatedAt = SQLite.Expression<Double>("createdAt")
+    private let colUpdatedAt = SQLite.Expression<Double>("updatedAt")
+    private let colSearchIndex = SQLite.Expression<String>("searchIndex")
 
     private init() {
         do {
@@ -50,16 +50,16 @@ final class DatabaseManager {
     }
 
     private func createTables() throws {
-        try db?.run(passwords.create(ifNotExists: true) { t in
-            t.column(colId, primaryKey: true)
-            t.column(colCategory, defaultValue: "General")
-            t.column(colTitle)
-            t.column(colUsername)
-            t.column(colEncryptedPassword)
-            t.column(colNotes, defaultValue: "")
-            t.column(colCreatedAt)
-            t.column(colUpdatedAt)
-            t.column(colSearchIndex, defaultValue: "[]")
+        try db?.run(passwords.create(ifNotExists: true) { table in
+            table.column(colId, primaryKey: true)
+            table.column(colCategory, defaultValue: "General")
+            table.column(colTitle)
+            table.column(colUsername)
+            table.column(colEncryptedPassword)
+            table.column(colNotes, defaultValue: "")
+            table.column(colCreatedAt)
+            table.column(colUpdatedAt)
+            table.column(colSearchIndex, defaultValue: "[]")
         })
     }
 

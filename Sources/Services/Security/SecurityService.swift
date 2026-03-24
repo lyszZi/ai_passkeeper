@@ -7,10 +7,10 @@ final class SecurityService {
 
     private let keychainService = KeychainService()
 
-    // MARK: - Master Password Management
+    // MARK: - Primary Password Management
 
-    /// Setup master password for first time
-    func setupMasterPassword(_ password: String) throws {
+    /// Setup primary password for first time
+    func setupPrimaryPassword(_ password: String) throws {
         // Generate random salt
         let salt = generateRandomBytes(count: 32)
 
@@ -28,16 +28,19 @@ final class SecurityService {
         let encryptedDEK = try encryptDataEncryptionKey(dataEncryptionKey)
 
         // Store everything
-        try keychainService.storeMasterPasswordHash(passwordHash, salt: salt)
+        try keychainService.storePrimaryPasswordHash(passwordHash, salt: salt)
         try keychainService.storeDataEncryptionKey(encryptedDEK)
+
+        // Store session key in keychain with biometric protection
+        try keychainService.storeSessionKey(keyData)
 
         // Store the derived key in memory for session
         SessionKeyManager.shared.setDerivedKey(derivedKey)
     }
 
-    /// Verify master password
-    func verifyMasterPassword(_ password: String) throws -> Bool {
-        guard let storedHash = keychainService.getMasterPasswordHash(),
+    /// Verify primary password
+    func verifyPrimaryPassword(_ password: String) throws -> Bool {
+        guard let storedHash = keychainService.getPrimaryPasswordHash(),
               let salt = keychainService.getSalt() else {
             return false
         }
@@ -52,6 +55,8 @@ final class SecurityService {
         let isValid = constantTimeCompare(storedHash, inputHash)
 
         if isValid {
+            // Store session key in keychain with biometric protection
+            try? keychainService.storeSessionKey(keyData)
             // Store derived key in session
             SessionKeyManager.shared.setDerivedKey(derivedKey)
         }
@@ -67,14 +72,33 @@ final class SecurityService {
         return isValid
     }
 
-    /// Change master password
-    func changeMasterPassword(_ newPassword: String) async throws {
+    /// Change primary password
+    func changePrimaryPassword(_ newPassword: String) async throws {
         let salt = generateRandomBytes(count: 32)
         let derivedKey = try deriveKey(from: newPassword, salt: salt)
         let keyData = derivedKey.withUnsafeBytes { Data($0) }
         let passwordHash = hashData(keyData)
-        try keychainService.storeMasterPasswordHash(passwordHash, salt: salt)
+        try keychainService.storePrimaryPasswordHash(passwordHash, salt: salt)
+        // Store session key in keychain with biometric protection
+        try keychainService.storeSessionKey(keyData)
         SessionKeyManager.shared.setDerivedKey(derivedKey)
+    }
+
+    // MARK: - Biometric Unlock
+
+    /// Unlock session key using biometric authentication
+    /// This retrieves the session key from Keychain (which requires biometric)
+    func unlockWithBiometric() throws -> Bool {
+        // Get session key from keychain (triggers biometric)
+        guard let keyData = keychainService.getSessionKey() else {
+            return false
+        }
+
+        // Restore the session key in memory
+        let derivedKey = SymmetricKey(data: keyData)
+        SessionKeyManager.shared.setDerivedKey(derivedKey)
+
+        return true
     }
 
     // MARK: - Encryption/Decryption
@@ -205,7 +229,7 @@ final class SecurityService {
             let keyData = key.withUnsafeBytes { Data($0) }
             let salt = generateRandomBytes(count: 32)
             let fallbackKey = try pbkdf2DeriveKey(
-                password: "fallback".data(using: .utf8)!,
+                password: Data("fallback".utf8),
                 salt: salt,
                 iterations: 100000,
                 keyLength: 32
@@ -248,11 +272,11 @@ final class SecurityService {
     }
 
     /// Constant-time comparison to prevent timing attacks
-    private func constantTimeCompare(_ a: Data, _ b: Data) -> Bool {
-        guard a.count == b.count else { return false }
+    private func constantTimeCompare(_ dataA: Data, _ dataB: Data) -> Bool {
+        guard dataA.count == dataB.count else { return false }
 
         var result: UInt8 = 0
-        for (byte1, byte2) in zip(a, b) {
+        for (byte1, byte2) in zip(dataA, dataB) {
             result |= byte1 ^ byte2
         }
 

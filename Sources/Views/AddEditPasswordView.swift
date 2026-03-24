@@ -17,19 +17,19 @@ struct AddEditPasswordView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Button("Cancel") {
+                Button("addEdit.cancel".localized) {
                     dismiss()
                 }
                 .buttonStyle(.bordered)
 
                 Spacer()
 
-                Text(viewModel.isEditing ? "Edit Password" : "Add Password")
+                Text(viewModel.isEditing ? "main.addPassword".localized : "main.addNewPassword".localized)
                     .font(.headline)
 
                 Spacer()
 
-                Button("Save") {
+                Button("addEdit.save".localized) {
                     Task {
                         if await viewModel.save() {
                             onSave()
@@ -48,58 +48,66 @@ struct AddEditPasswordView: View {
             // Form
             Form {
                 Section {
-                    TextField("Title", text: $viewModel.title)
+                    TextField("addEdit.titleField".localized, text: $viewModel.title)
                         .textFieldStyle(.roundedBorder)
 
-                    TextField("Username / Email", text: $viewModel.username)
+                    TextField("addEdit.username".localized, text: $viewModel.username)
                         .textFieldStyle(.roundedBorder)
 
-                    HStack {
+                    HStack(spacing: 12) {
                         if viewModel.showPassword {
-                            TextField("Password", text: $viewModel.password)
+                            TextField("detail.password".localized, text: $viewModel.password)
                                 .textFieldStyle(.roundedBorder)
                         } else {
-                            SecureField("Password", text: $viewModel.password)
+                            SecureField("detail.password".localized, text: $viewModel.password)
                                 .textFieldStyle(.roundedBorder)
                         }
 
-                        Button {
-                            viewModel.showPassword.toggle()
-                        } label: {
-                            Image(systemName: viewModel.showPassword ? "eye.slash" : "eye")
-                        }
-                        .buttonStyle(.borderless)
+                        // 按钮组
+                        HStack(spacing: 4) {
+                            Button {
+                                viewModel.showPassword.toggle()
+                            } label: {
+                                Image(systemName: viewModel.showPassword ? "eye.slash" : "eye")
+                                    .frame(width: 20, height: 20)
+                            }
+                            .buttonStyle(.borderless)
 
-                        Menu {
-                            Button("Generate Strong Password (20 chars)") {
-                                viewModel.generatePassword(length: 20)
+#if false
+                            Menu {
+                                Button("addEdit.generateStrong".localized) {
+                                    viewModel.generatePassword(length: 20)
+                                }
+                                Button("addEdit.generate16".localized) {
+                                    viewModel.generatePassword(length: 16)
+                                }
+                                Button("addEdit.generate12".localized) {
+                                    viewModel.generatePassword(length: 12)
+                                }
+                                Button("addEdit.generate8".localized) {
+                                    viewModel.generatePassword(length: 8)
+                                }
+                            } label: {
+                                Image(systemName: "wand.and.stars")
+                                    .frame(width: 20, height: 20)
                             }
-                            Button("Generate 16 chars") {
-                                viewModel.generatePassword(length: 16)
-                            }
-                            Button("Generate 12 chars") {
-                                viewModel.generatePassword(length: 12)
-                            }
-                            Button("Generate 8 chars") {
-                                viewModel.generatePassword(length: 8)
-                            }
-                        } label: {
-                            Image(systemName: "wand.and.stars")
+                            .menuStyle(.borderlessButton)
+#endif
                         }
-                        .menuStyle(.borderlessButton)
                     }
 
-                    Picker("Category", selection: $viewModel.category) {
+                    Picker("addEdit.category".localized, selection: $viewModel.category) {
                         ForEach(viewModel.categories, id: \.self) { category in
-                            Text(category).tag(category)
+                            Text(category.localized).tag(category)
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     TextEditor(text: $viewModel.notes)
                         .frame(minHeight: 100)
                         .font(.body)
                 } header: {
-                    Text("Details")
+                    Text("detail.details".localized)
                 }
 
                 if let error = viewModel.errorMessage {

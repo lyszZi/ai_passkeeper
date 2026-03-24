@@ -3,6 +3,7 @@ import SwiftUI
 /// Main content view - routes to appropriate screen based on app state
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var i18nService: I18nService
 
     var body: some View {
         Group {
@@ -33,16 +34,16 @@ struct LockScreenView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(.blue)
 
-            Text("PassKeeper")
+            Text("app.title".localized)
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("Enter your master password to unlock")
+            Text("auth.enterPassword".localized)
                 .foregroundStyle(.secondary)
 
             // Password field
             VStack(spacing: 16) {
-                SecureField("Master Password", text: $viewModel.masterPassword)
+                SecureField("auth.password".localized, text: $viewModel.primaryPassword)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 300)
                     .onSubmit {
@@ -57,7 +58,7 @@ struct LockScreenView: View {
                         .font(.caption)
                 }
 
-                Button("Unlock") {
+                Button("auth.unlock".localized) {
                     Task {
                         _ = await viewModel.unlockWithPassword()
                     }
@@ -65,6 +66,7 @@ struct LockScreenView: View {
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isLoading)
 
+#if false
                 // Biometric option
                 if viewModel.isBiometricAvailable {
                     Button {
@@ -76,6 +78,7 @@ struct LockScreenView: View {
                     }
                     .buttonStyle(.bordered)
                 }
+#endif
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -95,25 +98,25 @@ struct SetupView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(.blue)
 
-            Text("Welcome to PassKeeper")
+            Text("auth.welcome".localized)
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("Create a master password to secure your vault")
+            Text("auth.createVaultDesc".localized)
                 .foregroundStyle(.secondary)
 
             // Setup form
             VStack(spacing: 16) {
-                SecureField("Master Password", text: $viewModel.masterPassword)
+                SecureField("auth.password".localized, text: $viewModel.primaryPassword)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 300)
 
-                SecureField("Confirm Password", text: $viewModel.confirmPassword)
+                SecureField("auth.confirmPassword".localized, text: $viewModel.confirmPassword)
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 300)
                     .onSubmit {
                         Task {
-                            _ = await viewModel.setupMasterPassword()
+                            _ = await viewModel.setupPrimaryPassword()
                         }
                     }
 
@@ -123,13 +126,13 @@ struct SetupView: View {
                         .font(.caption)
                 }
 
-                Text("Password must be at least 8 characters")
+                Text("auth.passwordMinLength".localized)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Button("Create Vault") {
+                Button("auth.createVault".localized) {
                     Task {
-                        _ = await viewModel.setupMasterPassword()
+                        _ = await viewModel.setupPrimaryPassword()
                     }
                 }
                 .buttonStyle(.borderedProminent)

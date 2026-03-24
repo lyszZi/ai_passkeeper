@@ -1,10 +1,11 @@
 import Foundation
 import CryptoKit
 import CommonCrypto
+import XCTest
 
 /// Integration tests for encryption/decryption
 /// Tests using CryptoKit directly without app dependencies
-final class CryptoKitIntegrationTests {
+final class CryptoKitIntegrationTests: XCTestCase {
 
     // MARK: - AES-GCM Encryption Tests
 
@@ -20,7 +21,8 @@ final class CryptoKitIntegrationTests {
         let sealedBox = try AES.GCM.seal(plaintextData, using: key, nonce: nonce)
 
         guard let combined = sealedBox.combined else {
-            throw NSError(domain: "Test", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to get combined data"])
+            throw NSError(domain: "Test", code: 2,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to get combined data"])
         }
 
         // Decrypt
@@ -28,7 +30,8 @@ final class CryptoKitIntegrationTests {
         let decryptedData = try AES.GCM.open(decryptedSealedBox, using: key)
 
         guard let decryptedText = String(data: decryptedData, encoding: .utf8) else {
-            throw NSError(domain: "Test", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to decode decrypted data"])
+            throw NSError(domain: "Test", code: 3,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to decode decrypted data"])
         }
 
         assert(decryptedText == plaintext, "Decrypted text should match plaintext")
@@ -142,15 +145,17 @@ final class CryptoKitIntegrationTests {
     // MARK: - SHA256 Hash Tests
 
     func testSHA256Hash() throws {
-        let data = "TestString".data(using: .utf8)!
+        let data = Data("TestString".utf8)
         let hash = SHA256.hash(data: data)
 
-        assert(hash.count == 32, "SHA256 hash should be 32 bytes")
+        // Convert digest to array to get count
+        let hashArray = Array(hash)
+        assert(hashArray.count == 32, "SHA256 hash should be 32 bytes")
     }
 
     func testSHA256DifferentInputProducesDifferentHash() throws {
-        let data1 = "String1".data(using: .utf8)!
-        let data2 = "String2".data(using: .utf8)!
+        let data1 = Data("String1".utf8)
+        let data2 = Data("String2".utf8)
 
         let hash1 = SHA256.hash(data: data1)
         let hash2 = SHA256.hash(data: data2)
@@ -158,7 +163,8 @@ final class CryptoKitIntegrationTests {
         // Compare hash bytes
         let hash1Bytes = Array(hash1)
         let hash2Bytes = Array(hash2)
-        assert(hash1Bytes != hash2Bytes, "Different inputs should produce different hashes")
+        let areDifferent = hash1Bytes != hash2Bytes
+        assert(areDifferent, "Different inputs should produce different hashes")
     }
 
     // MARK: - Random Number Generation Tests
