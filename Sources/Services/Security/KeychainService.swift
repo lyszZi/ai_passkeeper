@@ -70,7 +70,7 @@ final class KeychainService {
     }
 
     /// Retrieve session key (will trigger biometric if needed) - disabled
-    func _getSessionKeyWithBiometric() -> Data? {
+    func getSessionKeyWithBiometric() -> Data? {
         let context = LAContext()
         context.localizedReason = "Access session key"
 
